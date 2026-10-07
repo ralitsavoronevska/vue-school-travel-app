@@ -14,7 +14,7 @@
     <section class="experiences">
       <h2>Top Experiences in {{ destination?.name }}</h2>
       <div class="cards">
-        <router-link 
+        <AppLink 
           :to="{ name: 'experience.show', params: { id: props.id, experienceSlug: experience.slug } }" 
           v-for="experience in destination?.experiences" 
           :key="experience.slug"
@@ -22,7 +22,7 @@
           <ExperienceCard 
             :experience="experience" 
           />
-        </router-link>
+        </AppLink>
       </div>  
       <router-view></router-view>
     </section>

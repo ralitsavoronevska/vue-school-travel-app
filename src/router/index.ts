@@ -8,9 +8,35 @@ interface ComponentShowProps {
 }
 
 const routes: RouteRecordRaw[] = [
-    { path: '/', name: 'Home', component: Home, alias: '/home'},
+    { 
+      path: '/', 
+      name: 'Home', 
+      component: Home, 
+      alias: '/home'
+    },
     // will match everything and put it under `route.params.pathMatch`
-    { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('@/views/NotFound.vue') },
+    { 
+      path: '/:pathMatch(.*)*', 
+      name: 'NotFound', 
+      component: () => import('@/views/NotFound.vue') 
+    },
+    { 
+      path: '/protected', 
+      name: 'protected', 
+      component: () => import('@/views/Protected.vue'), 
+      meta: { requiresAuth: true } 
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/Login.vue')
+    },
+    {
+      path: '/invoices',
+      name: 'invoices',
+      component: () => import('@/views/Invoices.vue'),
+      meta: { requiresAuth: true }
+    },
     { 
       path: '/destination/:id/:slug', 
       name: 'destination.show', 
@@ -49,13 +75,21 @@ const router = createRouter({
     // process.env.BASE_URL
   history: createWebHistory(),
   routes: routes,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(_, __, savedPosition) {
     return savedPosition || new Promise ((resolve) => {
       setTimeout(() => {
         resolve({ top: 0, behavior: 'smooth' })
       }, 3000)
     })
   }
+})
+
+// Global Navigation Guard
+// this function will be fired on every route change, before the route is confirmed
+router.beforeEach((to, _) => {
+  if (to.meta.requiresAuth && !(window as any).user) {
+    return { name: 'login', query: { redirect: to.fullPath } }
+  } 
 })
 
 export default router
