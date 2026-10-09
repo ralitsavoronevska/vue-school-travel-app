@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { onBeforeRouteLeave } from 'vue-router'
 
-onBeforeRouteLeave((to, from) => {
+onBeforeRouteLeave((_to, _from) => {
   const answer = window.confirm(
     'Are you sure you want to leave? Invoices are super awesome!'
   )

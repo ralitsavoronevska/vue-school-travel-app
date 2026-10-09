@@ -17,6 +17,6 @@ const router = useRouter()
 
 const logout = () => {
   (window as any).user = null
-  router.push({ name: 'Home' })
+  router.push({ name: 'Home', query: { logout: null } })
 }
 </script>

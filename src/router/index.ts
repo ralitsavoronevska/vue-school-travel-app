@@ -14,6 +14,7 @@ const routes: RouteRecordRaw[] = [
       component: Home, 
       alias: '/home'
     },
+    // { path: '/home', redirect: '/' }, // same effect as the alias property above
     // will match everything and put it under `route.params.pathMatch`
     { 
       path: '/:pathMatch(.*)*', 
@@ -23,7 +24,10 @@ const routes: RouteRecordRaw[] = [
     { 
       path: '/protected', 
       name: 'protected', 
-      component: () => import('@/views/Protected.vue'), 
+      components: {
+        default: () => import('@/views/Protected.vue'),
+        LeftSidebar: () => import('@/components/LeftSidebar.vue')
+      },
       meta: { requiresAuth: true } 
     },
     {
@@ -34,8 +38,38 @@ const routes: RouteRecordRaw[] = [
     {
       path: '/invoices',
       name: 'invoices',
-      component: () => import('@/views/Invoices.vue'),
+      components: {
+        default: () => import('@/views/Invoices.vue'),
+        LeftSidebar: () => import('@/components/LeftSidebar.vue')
+      },
       meta: { requiresAuth: true }
+    },
+    // {
+    //   path: '/orderId(\\d+)',
+    //   name: 'orders',
+    //   redirect: { name: 'Home' },
+    // },
+    // {
+    //   path: '/productName',
+    //   name: 'product',
+    //   redirect: { name: 'Home' },
+    // },
+    {
+      path: '/example/:id(\\d+)', 
+      // If we change the param to anything different than a number in the URL, it will not match this route and will instead match the NotFound route. 
+      // For example, /example/1 will match this route, but /example/abc will not match this route and will instead match the NotFound route.
+
+      // '/example/:id+' => will match no matter how many slashes we add after /example, e.g. /example/1, /example/1/2, /example/1/2/3, etc.
+
+      // '/example/:id(\\d+)+' => a repeatable parameter that can only match numbers, e.g. /example/1, /example/1/2, /example/1/2/3, etc.
+      // Visiting /example will not match this route and will instead match the NotFound route. 
+      // It does make the param required, so /example will not match, but /example/1 will match. If you want to make it optional, without allowing it to be repeatable, you can use the ? modifier after the +, e.g. /example/:id(\\d+)? which will match /example, /example/1, /example/1/2, /example/1/2/3, etc.
+
+      // '/example/:id(\\d+)*' will match no matter how many slashes we add after /example, but only if the first parameter is a number, 
+      // e.g. /example/1, /example/1/2, /example/1/2/3, etc. It also makes the param optional, so /example will match this route, 
+      // but /example/abc will not match this route and will instead match the NotFound route.
+      name: 'example',
+      component: () => import('@/views/Login.vue')
     },
     { 
       path: '/destination/:id/:slug', 

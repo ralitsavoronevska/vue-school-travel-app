@@ -1,6 +1,6 @@
 <template>
   <a
-    v-if="isExternal && typeof props.to === 'string'"
+    v-if="isExternalLink"
     :href="props.to"
     target="_blank"
     rel="noopener noreferrer"
@@ -8,22 +8,46 @@
   >
     <slot />
   </a>
-  <routerLink 
-    v-else 
-    v-bind="$props"
-    class="internal-link"
+
+  <RouterLink
+    v-else
+    :to="props.to"
+    :replace="props.replace"
+    :active-class="props.activeClass"
+    :exact-active-class="props.exactActiveClass"
+    :custom="true"
+    v-slot="{ href, isActive, isExactActive, navigate }"
+  >
+    <a
+      :href="href"
+      :class="getLinkClasses(isActive, isExactActive)"
+      @click="navigate"
     >
-    <slot />
-  </routerLink>
+      <slot />
+    </a>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import { computed } from 'vue'
-import { type RouterLinkProps } from 'vue-router'
 
-const props = defineProps<RouterLinkProps>()
-
-const isExternal = computed(() => {
-  return typeof props.to === 'string' && props.to.startsWith('http')
+const props = defineProps({
+  ...((RouterLink as any).props || {}),
+  inactiveClass: String,
+  to: {
+    type: [String, Object],
+    required: true,
+  },
 })
+
+const getLinkClasses = (isActive: boolean, isExactActive: boolean) => [
+  isActive && (props.activeClass || 'router-link-active'),
+  isExactActive && (props.exactActiveClass || 'router-link-exact-active'),
+  !isActive && props.inactiveClass,
+].filter(Boolean)
+
+const isExternalLink = computed(
+  () => typeof props.to === 'string' && props.to.startsWith('http')
+)
 </script>
